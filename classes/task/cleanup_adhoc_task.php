@@ -17,15 +17,15 @@
 /**
  * Adhoc task for cleanup operations.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2025
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_deleteoldquizattempts\task;
+namespace local_cleanupquestions\task;
 
 use core\task\adhoc_task;
-use local_deleteoldquizattempts\helper;
+use local_cleanupquestions\helper;
 use moodle_url;
 use core_user;
 use core\message\message;
@@ -33,8 +33,8 @@ use core\message\message;
 /**
  * Adhoc task for cleanup operations.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2025
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cleanup_adhoc_task extends adhoc_task {
@@ -45,7 +45,7 @@ class cleanup_adhoc_task extends adhoc_task {
      * @return string
      */
     public function get_name() {
-        return get_string('cleanuptaskname', 'local_deleteoldquizattempts');
+        return get_string('cleanuptaskname', 'local_cleanupquestions');
     }
 
     /**
@@ -119,20 +119,20 @@ class cleanup_adhoc_task extends adhoc_task {
         }
         
         $message = new message();
-        $message->component = 'local_deleteoldquizattempts';
+        $message->component = 'local_cleanupquestions';
         $message->name = 'cleanupcomplete';
         $message->userfrom = core_user::get_noreply_user();
         $message->userto = $user;
-        $message->subject = get_string('cleanupcompletesubject', 'local_deleteoldquizattempts');
+        $message->subject = get_string('cleanupcompletesubject', 'local_cleanupquestions');
         
         // Build detailed message
-        $messagetext = get_string('cleanupcompletefor', 'local_deleteoldquizattempts', $summary['coursename']) . "\n\n";
+        $messagetext = get_string('cleanupcompletefor', 'local_cleanupquestions', $summary['coursename']) . "\n\n";
         
-        $messagetext .= get_string('cleanupresults', 'local_deleteoldquizattempts') . "\n";
+        $messagetext .= get_string('cleanupresults', 'local_cleanupquestions') . "\n";
         $messagetext .= "----------------------------------------\n";
-        $messagetext .= get_string('duplicatequestionsresult', 'local_deleteoldquizattempts', $summary['duplicate_questions']) . "\n";
-        $messagetext .= get_string('emptyduplicatecategoriesresult', 'local_deleteoldquizattempts', $summary['empty_duplicate_categories']) . "\n";
-        $messagetext .= get_string('emptycategoriesresult', 'local_deleteoldquizattempts', $summary['empty_categories']) . "\n";
+        $messagetext .= get_string('duplicatequestionsresult', 'local_cleanupquestions', $summary['duplicate_questions']) . "\n";
+        $messagetext .= get_string('emptyduplicatecategoriesresult', 'local_cleanupquestions', $summary['empty_duplicate_categories']) . "\n";
+        $messagetext .= get_string('emptycategoriesresult', 'local_cleanupquestions', $summary['empty_categories']) . "\n";
         $messagetext .= "----------------------------------------\n";
         
         $totaldeleted = $summary['duplicate_questions']['deleted'] + 
@@ -142,7 +142,7 @@ class cleanup_adhoc_task extends adhoc_task {
                        $summary['empty_duplicate_categories']['skipped'] + 
                        $summary['empty_categories']['skipped'];
         
-        $messagetext .= "\n" . get_string('totalsummary', 'local_deleteoldquizattempts', [
+        $messagetext .= "\n" . get_string('totalsummary', 'local_cleanupquestions', [
             'deleted' => $totaldeleted,
             'skipped' => $totalskipped,
         ]);
@@ -150,7 +150,7 @@ class cleanup_adhoc_task extends adhoc_task {
         $message->fullmessage = $messagetext;
         $message->fullmessageformat = FORMAT_PLAIN;
         $message->fullmessagehtml = '<pre>' . htmlspecialchars($messagetext) . '</pre>';
-        $message->smallmessage = get_string('cleanupcompletesmall', 'local_deleteoldquizattempts');
+        $message->smallmessage = get_string('cleanupcompletesmall', 'local_cleanupquestions');
         $message->notification = 1;
         
         if ($summary['courseid']) {

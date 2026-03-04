@@ -17,8 +17,8 @@
 /**
  * CLI script to delete empty question categories.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2024
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -58,7 +58,7 @@ Examples:
 // Ensure errors are well explained.
 set_debugging(DEBUG_DEVELOPER, true);
 
-$helper = new \local_deleteoldquizattempts\helper();
+$helper = new \local_cleanupquestions\helper();
 
 if (!empty($options['courseid'])) {
     $helper->courseid = (int)$options['courseid'];

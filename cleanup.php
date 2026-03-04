@@ -17,8 +17,8 @@
 /**
  * Cleanup questions page.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2025
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,7 +28,7 @@ require_once($CFG->libdir . '/adminlib.php');
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
-$PAGE->set_url('/local/deleteoldquizattempts/cleanup.php', ['courseid' => $courseid]);
+$PAGE->set_url('/local/cleanupquestions/cleanup.php', ['courseid' => $courseid]);
 
 if ($courseid) {
     $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
@@ -38,12 +38,12 @@ if ($courseid) {
     
     $PAGE->set_context($context);
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_title(get_string('cleanupquestions', 'local_deleteoldquizattempts'));
+    $PAGE->set_title(get_string('cleanupquestions', 'local_cleanupquestions'));
 } else {
     require_login();
     require_capability('moodle/site:config', context_system::instance());
-    admin_externalpage_setup('local_deleteoldquizattempts_cleanup');
-    $PAGE->set_heading(get_string('cleanupallcourses', 'local_deleteoldquizattempts'));
+    admin_externalpage_setup('local_cleanupquestions_cleanup');
+    $PAGE->set_heading(get_string('cleanupallcourses', 'local_cleanupquestions'));
 }
 
 $existingtask = $DB->get_record_sql(
@@ -54,7 +54,7 @@ $existingtask = $DB->get_record_sql(
      ORDER BY id DESC 
      LIMIT 1",
     [
-        'classname' => '\\local_deleteoldquizattempts\\task\\cleanup_adhoc_task',
+        'classname' => '\\local_cleanupquestions\\task\\cleanup_adhoc_task',
         'courseid' => '%"courseid":' . $courseid . '%'
     ]
 );
@@ -64,24 +64,24 @@ $taskstatus = '';
 if ($existingtask) {
     $taskrunning = true;
     if ($existingtask->nextruntime <= time()) {
-        $taskstatus = get_string('taskrunning', 'local_deleteoldquizattempts');
+        $taskstatus = get_string('taskrunning', 'local_cleanupquestions');
     } else {
         $scheduledtime = userdate($existingtask->nextruntime);
-        $taskstatus = get_string('taskqueued', 'local_deleteoldquizattempts', $scheduledtime);
+        $taskstatus = get_string('taskqueued', 'local_cleanupquestions', $scheduledtime);
     }
 }
 
 if ($confirm && confirm_sesskey()) {
     if ($taskrunning) {
         echo $OUTPUT->header();
-        echo $OUTPUT->notification(get_string('taskalreadyrunning', 'local_deleteoldquizattempts'), 'notifywarning');
+        echo $OUTPUT->notification(get_string('taskalreadyrunning', 'local_cleanupquestions'), 'notifywarning');
         echo html_writer::tag('p', $taskstatus);
         echo $OUTPUT->continue_button(new moodle_url('/course/view.php', ['id' => $courseid]));
         echo $OUTPUT->footer();
         exit;
     }
     
-    $task = new \local_deleteoldquizattempts\task\cleanup_adhoc_task();
+    $task = new \local_cleanupquestions\task\cleanup_adhoc_task();
     $task->set_custom_data([
         'courseid' => $courseid,
         'userid' => $USER->id,
@@ -89,8 +89,8 @@ if ($confirm && confirm_sesskey()) {
     \core\task\manager::queue_adhoc_task($task);
     
     echo $OUTPUT->header();
-    echo $OUTPUT->notification(get_string('cleanuptaskqueued', 'local_deleteoldquizattempts'), 'notifysuccess');
-    echo html_writer::tag('p', get_string('cleanupnotification', 'local_deleteoldquizattempts'));
+    echo $OUTPUT->notification(get_string('cleanuptaskqueued', 'local_cleanupquestions'), 'notifysuccess');
+    echo html_writer::tag('p', get_string('cleanupnotification', 'local_cleanupquestions'));
     echo $OUTPUT->continue_button(new moodle_url('/course/view.php', ['id' => $courseid]));
     echo $OUTPUT->footer();
 } else {
@@ -99,29 +99,29 @@ if ($confirm && confirm_sesskey()) {
     
     if ($taskrunning) {
         echo $OUTPUT->notification($taskstatus, 'notifyinfo');
-        echo html_writer::tag('p', get_string('taskstatusinfo', 'local_deleteoldquizattempts'));
+        echo html_writer::tag('p', get_string('taskstatusinfo', 'local_cleanupquestions'));
     }
     
     if ($courseid) {
-        $message = get_string('confirmcleanup', 'local_deleteoldquizattempts', $course->fullname);
+        $message = get_string('confirmcleanup', 'local_cleanupquestions', $course->fullname);
     } else {
-        $message = get_string('confirmcleanupall', 'local_deleteoldquizattempts');
+        $message = get_string('confirmcleanupall', 'local_cleanupquestions');
     }
     
-    echo $OUTPUT->heading(get_string('cleanupquestions', 'local_deleteoldquizattempts'));
+    echo $OUTPUT->heading(get_string('cleanupquestions', 'local_cleanupquestions'));
     
     // Show statistics if courseid is provided.
     if ($courseid) {
-        $stats = \local_deleteoldquizattempts\helper::get_course_statistics($courseid);
+        $stats = \local_cleanupquestions\helper::get_course_statistics($courseid);
         
         echo $OUTPUT->box_start('generalbox');
-        echo html_writer::tag('h4', get_string('currentstatistics', 'local_deleteoldquizattempts'));
+        echo html_writer::tag('h4', get_string('currentstatistics', 'local_cleanupquestions'));
         echo html_writer::start_tag('ul');
-        echo html_writer::tag('li', get_string('statisticstotal', 'local_deleteoldquizattempts', $stats->total));
-        echo html_writer::tag('li', get_string('statisticsunused', 'local_deleteoldquizattempts', $stats->unused));
-        echo html_writer::tag('li', get_string('statisticsduplicates', 'local_deleteoldquizattempts', $stats->duplicates));
-        echo html_writer::tag('li', get_string('statisticsemptyduplicatecategories', 'local_deleteoldquizattempts', $stats->emptyduplicatecategories));
-        echo html_writer::tag('li', get_string('statisticsemptycategories', 'local_deleteoldquizattempts', $stats->emptycategories));
+        echo html_writer::tag('li', get_string('statisticstotal', 'local_cleanupquestions', $stats->total));
+        echo html_writer::tag('li', get_string('statisticsunused', 'local_cleanupquestions', $stats->unused));
+        echo html_writer::tag('li', get_string('statisticsduplicates', 'local_cleanupquestions', $stats->duplicates));
+        echo html_writer::tag('li', get_string('statisticsemptyduplicatecategories', 'local_cleanupquestions', $stats->emptyduplicatecategories));
+        echo html_writer::tag('li', get_string('statisticsemptycategories', 'local_cleanupquestions', $stats->emptycategories));
         echo html_writer::end_tag('ul');
         echo $OUTPUT->box_end();
         echo html_writer::empty_tag('br');
@@ -129,21 +129,21 @@ if ($confirm && confirm_sesskey()) {
     
     echo html_writer::tag('p', $message);
     
-    echo html_writer::tag('p', get_string('cleanupwillremove', 'local_deleteoldquizattempts'));
+    echo html_writer::tag('p', get_string('cleanupwillremove', 'local_cleanupquestions'));
     echo html_writer::start_tag('ul');
-    echo html_writer::tag('li', get_string('duplicatequestions', 'local_deleteoldquizattempts'));
-    echo html_writer::tag('li', get_string('emptyduplicatecategories', 'local_deleteoldquizattempts'));
-    echo html_writer::tag('li', get_string('emptycategories', 'local_deleteoldquizattempts'));
-    echo html_writer::tag('li', get_string('unusedquestions', 'local_deleteoldquizattempts'));
+    echo html_writer::tag('li', get_string('duplicatequestions', 'local_cleanupquestions'));
+    echo html_writer::tag('li', get_string('emptyduplicatecategories', 'local_cleanupquestions'));
+    echo html_writer::tag('li', get_string('emptycategories', 'local_cleanupquestions'));
+    echo html_writer::tag('li', get_string('unusedquestions', 'local_cleanupquestions'));
     echo html_writer::end_tag('ul');
     
     if ($taskrunning) {
-        echo html_writer::tag('p', get_string('cannotqueuewhilerunning', 'local_deleteoldquizattempts'), 
+        echo html_writer::tag('p', get_string('cannotqueuewhilerunning', 'local_cleanupquestions'), 
             ['class' => 'alert alert-warning']);
         $cancelurl = $courseid ? new moodle_url('/course/view.php', ['id' => $courseid]) : new moodle_url('/');
         echo $OUTPUT->single_button($cancelurl, get_string('back'), 'get');
     } else {
-        $continueurl = new moodle_url('/local/deleteoldquizattempts/cleanup.php', 
+        $continueurl = new moodle_url('/local/cleanupquestions/cleanup.php', 
             ['courseid' => $courseid, 'confirm' => 1, 'sesskey' => sesskey()]);
         $cancelurl = $courseid ? new moodle_url('/course/view.php', ['id' => $courseid]) : new moodle_url('/');
         

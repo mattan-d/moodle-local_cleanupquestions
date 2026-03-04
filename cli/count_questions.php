@@ -17,8 +17,8 @@
 /**
  * CLI script to count total questions in a course.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,11 +50,11 @@ Options:
 -h, --help            Print out this help
 
 Examples:
- php local/deleteoldquizattempts/cli/count_questions.php --courseid=5
- php local/deleteoldquizattempts/cli/count_questions.php --courseid=5 --verbose
- php local/deleteoldquizattempts/cli/count_questions.php --verbose (all courses)
- php local/deleteoldquizattempts/cli/count_questions.php --top=10 (top 10 courses)
- php local/deleteoldquizattempts/cli/count_questions.php --top=20 --verbose (top 20 with details)
+ php local/cleanupquestions/cli/count_questions.php --courseid=5
+ php local/cleanupquestions/cli/count_questions.php --courseid=5 --verbose
+ php local/cleanupquestions/cli/count_questions.php --verbose (all courses)
+ php local/cleanupquestions/cli/count_questions.php --top=10 (top 10 courses)
+ php local/cleanupquestions/cli/count_questions.php --top=20 --verbose (top 20 with details)
 ";
     echo $help;
     exit(0);

@@ -17,21 +17,21 @@
 /**
  * Tool for deleting old quiz and question attempts.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_deleteoldquizattempts\task;
+namespace local_cleanupquestions\task;
 
 use core\task\scheduled_task;
-use local_deleteoldquizattempts\helper;
+use local_cleanupquestions\helper;
 
 /**
  * Scheduler task.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delete_attempts_task extends scheduled_task {
@@ -42,7 +42,7 @@ class delete_attempts_task extends scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('taskname', 'local_deleteoldquizattempts');
+        return get_string('taskname', 'local_cleanupquestions');
     }
 
     /**

@@ -17,8 +17,8 @@
 /**
  * Tool for deleting old quiz and question attempts.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,15 +31,15 @@ defined('MOODLE_INTERNAL') || die();
  * @param stdClass $course The course object
  * @param context_course $context The course context
  */
-function local_deleteoldquizattempts_extend_navigation_course($navigation, $course, $context) {
+function local_cleanupquestions_extend_navigation_course($navigation, $course, $context) {
     if (has_capability('moodle/site:config', $context)) {
-        $url = new moodle_url('/local/deleteoldquizattempts/cleanup.php', ['courseid' => $course->id]);
+        $url = new moodle_url('/local/cleanupquestions/cleanup.php', ['courseid' => $course->id]);
         $navigation->add(
-            get_string('cleanupquestions', 'local_deleteoldquizattempts'),
+            get_string('cleanupquestions', 'local_cleanupquestions'),
             $url,
             navigation_node::TYPE_SETTING,
             null,
-            'local_deleteoldquizattempts_cleanup',
+            'local_cleanupquestions_cleanup',
             new pix_icon('i/cleanup', '')
         );
     }

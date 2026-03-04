@@ -17,12 +17,12 @@
 /**
  * Tool for deleting old quiz and question attempts.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_deleteoldquizattempts;
+namespace local_cleanupquestions;
 
 use advanced_testcase;
 use core_question\local\bank\question_version_status;
@@ -36,10 +36,10 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 /**
  * Unittests for delete_unused_question
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_deleteoldquizattempts\helper::delete_unused_questions
+ * @covers \local_cleanupquestions\helper::delete_unused_questions
  */
 final class delete_questions_test extends advanced_testcase {
 

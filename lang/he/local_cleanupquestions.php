@@ -17,12 +17,12 @@
 /**
  * Hebrew language strings.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2025
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'מחיקת ניסיונות בוחן ושאלות ישנים';
+$string['pluginname'] = 'ניקוי שאלות';
 $string['cleanupquestions'] = 'ניקוי שאלות';
 $string['cleanupallcourses'] = 'ניקוי כל הקורסים';
 $string['cleanuptaskname'] = 'משימת ניקוי שאלות';
@@ -65,4 +65,3 @@ $string['duplicatequestionusageinfo'] = ' - נמצאת בשימוש ב-{$a->comp
 $string['duplicatequestionskippeddeletionfailed'] = 'דולגה שאלה כפולה (מחיקה נכשלה - {$a->reason}): {$a->name} (מזהה: {$a->id})';
 $string['duplicatequestionskippederror'] = 'דולגה שאלה כפולה (שגיאה: {$a->error}): {$a->name} (מזהה: {$a->id})';
 $string['duplicatequestionsprogress'] = 'נמחקו {$a->deleted}, דולגו {$a->skipped} מתוך {$a->total}';
-?>

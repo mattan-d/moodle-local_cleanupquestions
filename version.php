@@ -15,16 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tool for deleting old quiz and question attempts.
+ * Cleanup questions plugin.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_deleteoldquizattempts';
+$plugin->component = 'local_cleanupquestions';
 $plugin->version   = 2026011500;
 $plugin->release = '3.0.1';
 $plugin->maturity = MATURITY_STABLE;

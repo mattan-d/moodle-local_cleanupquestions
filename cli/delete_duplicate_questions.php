@@ -17,8 +17,8 @@
 /**
  * CLI script for deleting duplicate questions.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,9 +50,9 @@ Options:
 -h, --help            Print out this help
 
 Examples:
- php local/deleteoldquizattempts/cli/delete_duplicate_questions.php --courseid=5 --verbose
- php local/deleteoldquizattempts/cli/delete_duplicate_questions.php --verbose
- php local/deleteoldquizattempts/cli/delete_duplicate_questions.php --courseid=5 --timelimit=300
+ php local/cleanupquestions/cli/delete_duplicate_questions.php --courseid=5 --verbose
+ php local/cleanupquestions/cli/delete_duplicate_questions.php --verbose
+ php local/cleanupquestions/cli/delete_duplicate_questions.php --courseid=5 --timelimit=300
 ";
     echo $help;
     exit(0);
@@ -61,7 +61,7 @@ Examples:
 // Ensure errors are well explained.
 set_debugging(DEBUG_DEVELOPER, true);
 
-$helper = new \local_deleteoldquizattempts\helper();
+$helper = new \local_cleanupquestions\helper();
 
 if (!empty($options['courseid'])) {
     $helper->courseid = (int)$options['courseid'];

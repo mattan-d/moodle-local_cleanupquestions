@@ -15,25 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tool for deleting old quiz and question attempts.
+ * Cleanup questions plugin.
  *
- * @package local_deleteoldquizattempts
- * @copyright 2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $settings = new admin_settingpage('local_deleteoldquizattempts', get_string('pluginname', 'local_deleteoldquizattempts'));
+    $settings = new admin_settingpage('local_cleanupquestions', get_string('pluginname', 'local_cleanupquestions'));
     $ADMIN->add('localplugins', $settings);
+    $ADMIN->add(
+        'localplugins',
+        new admin_externalpage(
+            'local_cleanupquestions_cleanup',
+            get_string('cleanupquestions', 'local_cleanupquestions'),
+            new moodle_url('/local/cleanupquestions/cleanup.php'),
+            'moodle/site:config'
+        )
+    );
     $settings->add(
         new admin_setting_configselect(
-            'local_deleteoldquizattempts/attemptlifetime',
-            new lang_string('attemptlifetime', 'local_deleteoldquizattempts'),
-            new lang_string('attemptlifetime_help', 'local_deleteoldquizattempts'),
+            'local_cleanupquestions/attemptlifetime',
+            new lang_string('attemptlifetime', 'local_cleanupquestions'),
+            new lang_string('attemptlifetime_help', 'local_cleanupquestions'),
             0,
             [
-                0 => new lang_string('donotdeleteonschedule', 'local_deleteoldquizattempts'),
+                0 => new lang_string('donotdeleteonschedule', 'local_cleanupquestions'),
                 365 * 5 => new lang_string('numyears', '', 5),
                 365 * 3 => new lang_string('numyears', '', 3),
                 365 * 2 => new lang_string('numyears', '', 2),
@@ -52,20 +61,20 @@ if ($hassiteconfig) {
     );
     $settings->add(
         new admin_setting_configcheckbox(
-            'local_deleteoldquizattempts/deleteunusedquestions',
-            new lang_string('deleteunusedhiddenquestions', 'local_deleteoldquizattempts'),
-            new lang_string('deleteunusedhiddenquestions_help', 'local_deleteoldquizattempts'),
+            'local_cleanupquestions/deleteunusedquestions',
+            new lang_string('deleteunusedhiddenquestions', 'local_cleanupquestions'),
+            new lang_string('deleteunusedhiddenquestions_help', 'local_cleanupquestions'),
             0
         )
     );
     $settings->add(
         new admin_setting_configselect(
-            'local_deleteoldquizattempts/maxexecutiontime',
-            new lang_string('maxexecutiontime', 'local_deleteoldquizattempts'),
-            new lang_string('maxexecutiontime_help', 'local_deleteoldquizattempts'),
+            'local_cleanupquestions/maxexecutiontime',
+            new lang_string('maxexecutiontime', 'local_cleanupquestions'),
+            new lang_string('maxexecutiontime_help', 'local_cleanupquestions'),
             0,
             [
-                0 => new lang_string('notlimited', 'local_deleteoldquizattempts'),
+                0 => new lang_string('notlimited', 'local_cleanupquestions'),
                 30 => new lang_string('numseconds', '', 30),
                 60 => new lang_string('numminutes', '', 1),
                 60 * 5 => new lang_string('numminutes', '', 5),

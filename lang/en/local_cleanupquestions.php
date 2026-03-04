@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tool for deleting old quiz and question attempts.
+ * Cleanup questions plugin.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,7 +35,7 @@ $string['maxexecutiontime_reached'] = 'Operation stopped due to time limit';
 $string['notlimited'] = 'Not limited';
 $string['nounusedquestions'] = 'No unused hidden questions found.';
 $string['unusedquestionsfound'] = 'Found {$a} unused hidden questions to delete.';
-$string['pluginname'] = 'Old quiz and question attempts deletion';
+$string['pluginname'] = 'Cleanup Questions';
 $string['privacy:metadata'] = 'The plugin does not store any personal data.';
 $string['questionsdeleted'] = 'Deleted {$a->deleted}, skipped {$a->skipped} unused hidden questions.';
 $string['questionsprogress'] = 'Deleted {$a->deleted}, skipped {$a->skipped} of {$a->total}';
@@ -114,4 +114,3 @@ $string['statisticsunused'] = 'Unused Questions: {$a}';
 $string['statisticsduplicates'] = 'Duplicate Questions: {$a}';
 $string['statisticsemptyduplicatecategories'] = 'Empty Duplicate Categories: {$a}';
 $string['statisticsemptycategories'] = 'Empty Categories: {$a}';
-?>

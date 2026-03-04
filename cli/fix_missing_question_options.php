@@ -17,8 +17,8 @@
 /**
  * CLI script to fix questions with missing options
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2025
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -77,7 +77,7 @@ if ($options['delete'] && $options['fix']) {
 // Ensure errors are well explained.
 set_debugging(DEBUG_DEVELOPER, true);
 
-$helper = new \local_deleteoldquizattempts\helper();
+$helper = new \local_cleanupquestions\helper();
 
 if ($options['courseid']) {
     $helper->courseid = (int)$options['courseid'];
@@ -99,7 +99,7 @@ if ($options['delete']) {
 list($fixed, $failed) = $helper->fix_missing_question_options($action, $trace);
 
 if ($trace) {
-    $trace->output("\n" . get_string('missingoptionssummary', 'local_deleteoldquizattempts', [
+    $trace->output("\n" . get_string('missingoptionssummary', 'local_cleanupquestions', [
         'fixed' => $fixed,
         'failed' => $failed,
         'action' => $action,

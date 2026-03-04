@@ -17,12 +17,12 @@
 /**
  * Tool for deleting old quiz and question attempts.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_deleteoldquizattempts;
+namespace local_cleanupquestions;
 
 use core_question\local\bank\question_version_status;
 
@@ -33,8 +33,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 /**
  * Class with main functions
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper {
@@ -88,14 +88,14 @@ class helper {
                 quiz_delete_attempt($attempt, $quiz);
                 $deleted++;
                 if ($trace) {
-                    $trace->output(get_string('attemptsprogress', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('attemptsprogress', 'local_cleanupquestions', [
                         'deleted' => $deleted,
                         'total' => $total,
                     ]));
                 }
                 if ($stoptime && (time() >= $stoptime)) {
                     if ($trace) {
-                        $trace->output(get_string('maxexecutiontime_reached', 'local_deleteoldquizattempts'));
+                        $trace->output(get_string('maxexecutiontime_reached', 'local_cleanupquestions'));
                     }
                     break 2;
                 }
@@ -177,12 +177,12 @@ class helper {
         $total = $DB->count_records_sql($sqlcount, $params);
         
         if ($trace) {
-            $trace->output(get_string('unusedquestionsfound', 'local_deleteoldquizattempts', $total));
+            $trace->output(get_string('unusedquestionsfound', 'local_cleanupquestions', $total));
         }
         
         if ($total == 0) {
             if ($trace) {
-                $trace->output(get_string('nounusedquestions', 'local_deleteoldquizattempts'));
+                $trace->output(get_string('nounusedquestions', 'local_cleanupquestions'));
             }
             return [0, 0];
         }
@@ -202,7 +202,7 @@ class helper {
                     $deleted++;
                 }
                 if ($trace && (($deleted + $skipped) % 100 == 0)) {
-                    $trace->output(get_string('questionsprogress', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('questionsprogress', 'local_cleanupquestions', [
                         'deleted' => $deleted,
                         'skipped' => $skipped,
                         'total' => $total,
@@ -210,7 +210,7 @@ class helper {
                 }
                 if ($stoptime && (time() >= $stoptime)) {
                     if ($trace) {
-                        $trace->output(get_string('maxexecutiontime_reached', 'local_deleteoldquizattempts'));
+                        $trace->output(get_string('maxexecutiontime_reached', 'local_cleanupquestions'));
                     }
                     break 2;
                 }
@@ -219,7 +219,7 @@ class helper {
         } while (!$rsempty);
         
         if ($trace) {
-            $trace->output(get_string('questionsprogress', 'local_deleteoldquizattempts', [
+            $trace->output(get_string('questionsprogress', 'local_cleanupquestions', [
                 'deleted' => $deleted,
                 'skipped' => $skipped,
                 'total' => $total,
@@ -233,9 +233,9 @@ class helper {
      * Task hander
      */
     public function task_handler() {
-        $timelimit = (int)get_config('local_deleteoldquizattempts', 'maxexecutiontime');
-        $lifetime = (int)get_config('local_deleteoldquizattempts', 'attemptlifetime');
-        $deletequestions = (int)get_config('local_deleteoldquizattempts', 'deleteunusedquestions');
+        $timelimit = (int)get_config('local_cleanupquestions', 'maxexecutiontime');
+        $lifetime = (int)get_config('local_cleanupquestions', 'attemptlifetime');
+        $deletequestions = (int)get_config('local_cleanupquestions', 'deleteunusedquestions');
 
         if ($timelimit) {
             $stoptime = time() + $timelimit;
@@ -247,7 +247,7 @@ class helper {
             $timestamp = time() - ($lifetime * 3600 * 24);
 
             $attempts = $this->delete_attempts($timestamp, $stoptime);
-            mtrace('    ' . get_string('attemptsdeleted', 'local_deleteoldquizattempts', $attempts));
+            mtrace('    ' . get_string('attemptsdeleted', 'local_cleanupquestions', $attempts));
         }
 
         if ($stoptime && time() > $stoptime) {
@@ -256,7 +256,7 @@ class helper {
 
         if ($deletequestions) {
             [$deleted, $skipped] = $this->delete_unused_questions($stoptime);
-            mtrace('    ' . get_string('questionsdeleted', 'local_deleteoldquizattempts', [
+            mtrace('    ' . get_string('questionsdeleted', 'local_cleanupquestions', [
                 'deleted' => $deleted,
                 'skipped' => $skipped,
             ]));
@@ -295,9 +295,9 @@ Options:
 Only one of --days, --timestamp and --date options should be specified.
 
 Examples:
- php local/deleteoldquizattempts/cli/delete_attempts.php --days=90 --verbose
- php local/deleteoldquizattempts/cli/delete_attempts.php --timestamp=1514764800 --timelimit=300
- php local/deleteoldquizattempts/cli/delete_attempts.php --date=\"2018-01-01 00:00:00\"
+ php local/cleanupquestions/cli/delete_attempts.php --days=90 --verbose
+ php local/cleanupquestions/cli/delete_attempts.php --timestamp=1514764800 --timelimit=300
+ php local/cleanupquestions/cli/delete_attempts.php --date=\"2018-01-01 00:00:00\"
 ";
             echo $help;
             return;
@@ -356,8 +356,8 @@ Options:
 -h, --help            Print out this help
 
 Examples:
- php local/deleteoldquizattempts/cli/delete_unused_questions.php --timelimit=300 --verbose
- php local/deleteoldquizattempts/cli/delete_unused_questions.php --courseid=5 --verbose
+ php local/cleanupquestions/cli/delete_unused_questions.php --timelimit=300 --verbose
+ php local/cleanupquestions/cli/delete_unused_questions.php --courseid=5 --verbose
 ";
             echo $help;
             return;
@@ -415,7 +415,7 @@ Examples:
                 
                 if ($trace) {
                     $courseobj = $DB->get_record('course', ['id' => $course->id], 'id, fullname');
-                    $trace->output("\n" . get_string('processingcourse', 'local_deleteoldquizattempts', [
+                    $trace->output("\n" . get_string('processingcourse', 'local_cleanupquestions', [
                         'name' => $courseobj->fullname,
                         'id' => $courseobj->id,
                     ]));
@@ -431,7 +431,7 @@ Examples:
             }
             
             if ($trace) {
-                $trace->output("\n" . get_string('duplicatequestionsfinal', 'local_deleteoldquizattempts', [
+                $trace->output("\n" . get_string('duplicatequestionsfinal', 'local_cleanupquestions', [
                     'deleted' => $totaldeleted,
                     'skipped' => $totalskipped,
                 ]));
@@ -482,12 +482,12 @@ Examples:
         }
         
         if ($trace) {
-            $trace->output(get_string('duplicatequestionsfound', 'local_deleteoldquizattempts', $totalduplicates));
+            $trace->output(get_string('duplicatequestionsfound', 'local_cleanupquestions', $totalduplicates));
         }
         
         if ($totalduplicates == 0) {
             if ($trace) {
-                $trace->output(get_string('noduplicatequestions', 'local_deleteoldquizattempts'));
+                $trace->output(get_string('noduplicatequestions', 'local_cleanupquestions'));
             }
             return [0, 0];
         }
@@ -566,7 +566,7 @@ Examples:
                                     }
                                 }
                                 
-                                $activityinfo = get_string('duplicatequestionusageinfo', 'local_deleteoldquizattempts', [
+                                $activityinfo = get_string('duplicatequestionusageinfo', 'local_cleanupquestions', [
                                     'component' => $usageinfo->component,
                                     'activity' => $activityname ? $activityname : 'Unknown',
                                     'courseid' => $cm->course,
@@ -575,7 +575,7 @@ Examples:
                             }
                         }
                         
-                        $trace->output(get_string('duplicatequestionskippedusedinquiz', 'local_deleteoldquizattempts', [
+                        $trace->output(get_string('duplicatequestionskippedusedinquiz', 'local_cleanupquestions', [
                             'name' => $question->name,
                             'id' => $question->id,
                             'info' => $activityinfo,
@@ -590,7 +590,7 @@ Examples:
                         if ($DB->record_exists('question', ['id' => $question->id])) {
                             $skipped++;
                             if ($trace) {
-                                $trace->output(get_string('duplicatequestionskippeddeletionfailed', 'local_deleteoldquizattempts', [
+                                $trace->output(get_string('duplicatequestionskippeddeletionfailed', 'local_cleanupquestions', [
                                     'name' => $question->name,
                                     'id' => $question->id,
                                     'reason' => 'Question still exists after deletion attempt',
@@ -599,7 +599,7 @@ Examples:
                         } else {
                             $deleted++;
                             if ($trace) {
-                                $trace->output(get_string('duplicatequestiondeleted', 'local_deleteoldquizattempts', [
+                                $trace->output(get_string('duplicatequestiondeleted', 'local_cleanupquestions', [
                                     'name' => $question->name,
                                     'id' => $question->id,
                                 ]));
@@ -608,7 +608,7 @@ Examples:
                     } catch (\Exception $e) {
                         $skipped++;
                         if ($trace) {
-                            $trace->output(get_string('duplicatequestionskippederror', 'local_deleteoldquizattempts', [
+                            $trace->output(get_string('duplicatequestionskippederror', 'local_cleanupquestions', [
                                 'name' => $question->name,
                                 'id' => $question->id,
                                 'error' => $e->getMessage(),
@@ -618,7 +618,7 @@ Examples:
                 }
                 
                 if ($trace && (($deleted + $skipped) % 100 == 0)) {
-                    $trace->output(get_string('duplicatequestionsprogress', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('duplicatequestionsprogress', 'local_cleanupquestions', [
                         'deleted' => $deleted,
                         'skipped' => $skipped,
                         'total' => $totalduplicates,
@@ -627,7 +627,7 @@ Examples:
                 
                 if ($stoptime && (time() >= $stoptime)) {
                     if ($trace) {
-                        $trace->output(get_string('maxexecutiontime_reached', 'local_deleteoldquizattempts'));
+                        $trace->output(get_string('maxexecutiontime_reached', 'local_cleanupquestions'));
                     }
                     break 2;
                 }
@@ -635,7 +635,7 @@ Examples:
         }
         
         if ($trace) {
-            $trace->output(get_string('duplicatequestionsprogress', 'local_deleteoldquizattempts', [
+            $trace->output(get_string('duplicatequestionsprogress', 'local_cleanupquestions', [
                 'deleted' => $deleted,
                 'skipped' => $skipped,
                 'total' => $totalduplicates,
@@ -688,12 +688,12 @@ Examples:
         }
         
         if ($trace) {
-            $trace->output(get_string('duplicatecategoriesfound', 'local_deleteoldquizattempts', $totalduplicates));
+            $trace->output(get_string('duplicatecategoriesfound', 'local_cleanupquestions', $totalduplicates));
         }
         
         if ($totalduplicates == 0) {
             if ($trace) {
-                $trace->output(get_string('noduplicatecategories', 'local_deleteoldquizattempts'));
+                $trace->output(get_string('noduplicatecategories', 'local_cleanupquestions'));
             }
             return [0, 0];
         }
@@ -746,7 +746,7 @@ Examples:
                 if ($questioncount > 0) {
                     $skipped++;
                     if ($trace) {
-                        $trace->output(get_string('duplicatecategoryskipped', 'local_deleteoldquizattempts', [
+                        $trace->output(get_string('duplicatecategoryskipped', 'local_cleanupquestions', [
                             'name' => $category->name,
                             'id' => $category->id,
                             'count' => $questioncount,
@@ -758,7 +758,7 @@ Examples:
                         $DB->delete_records('question_categories', ['id' => $category->id]);
                         $deleted++;
                         if ($trace) {
-                            $trace->output(get_string('duplicatecategorydeleted', 'local_deleteoldquizattempts', [
+                            $trace->output(get_string('duplicatecategorydeleted', 'local_cleanupquestions', [
                                 'name' => $category->name,
                                 'id' => $category->id,
                             ]));
@@ -766,7 +766,7 @@ Examples:
                     } catch (\Exception $e) {
                         $skipped++;
                         if ($trace) {
-                            $trace->output(get_string('duplicatecategorydeletefailed', 'local_deleteoldquizattempts', [
+                            $trace->output(get_string('duplicatecategorydeletefailed', 'local_cleanupquestions', [
                                 'name' => $category->name,
                                 'id' => $category->id,
                                 'error' => $e->getMessage(),
@@ -776,7 +776,7 @@ Examples:
                 }
                 
                 if ($trace && (($deleted + $skipped) % 100 == 0)) {
-                    $trace->output(get_string('duplicatecategoriesprogress', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('duplicatecategoriesprogress', 'local_cleanupquestions', [
                         'deleted' => $deleted,
                         'skipped' => $skipped,
                         'total' => $totalduplicates,
@@ -785,7 +785,7 @@ Examples:
                 
                 if ($stoptime && (time() >= $stoptime)) {
                     if ($trace) {
-                        $trace->output(get_string('maxexecutiontime_reached', 'local_deleteoldquizattempts'));
+                        $trace->output(get_string('maxexecutiontime_reached', 'local_cleanupquestions'));
                     }
                     break 2;
                 }
@@ -793,7 +793,7 @@ Examples:
         }
         
         if ($trace) {
-            $trace->output(get_string('duplicatecategoriesprogress', 'local_deleteoldquizattempts', [
+            $trace->output(get_string('duplicatecategoriesprogress', 'local_cleanupquestions', [
                 'deleted' => $deleted,
                 'skipped' => $skipped,
                 'total' => $totalduplicates,
@@ -838,7 +838,7 @@ Examples:
         $categories = $DB->get_records_sql($sql, $params);
         
         if ($trace) {
-            $trace->output(get_string('scanningemptycategories', 'local_deleteoldquizattempts', count($categories)));
+            $trace->output(get_string('scanningemptycategories', 'local_cleanupquestions', count($categories)));
         }
         
         $deleted = 0;
@@ -865,7 +865,7 @@ Examples:
             if ($questioncount > 0) {
                 $skipped++;
                 if ($trace) {
-                    $trace->output(get_string('categoryskipped', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('categoryskipped', 'local_cleanupquestions', [
                         'name' => $category->name,
                         'id' => $category->id,
                         'count' => $questioncount,
@@ -877,7 +877,7 @@ Examples:
                     $DB->delete_records('question_categories', ['id' => $category->id]);
                     $deleted++;
                     if ($trace) {
-                        $trace->output(get_string('categorydeleted', 'local_deleteoldquizattempts', [
+                        $trace->output(get_string('categorydeleted', 'local_cleanupquestions', [
                             'name' => $category->name,
                             'id' => $category->id,
                         ]));
@@ -885,7 +885,7 @@ Examples:
                 } catch (\Exception $e) {
                     $skipped++;
                     if ($trace) {
-                        $trace->output(get_string('categorydeletefailed', 'local_deleteoldquizattempts', [
+                        $trace->output(get_string('categorydeletefailed', 'local_cleanupquestions', [
                             'name' => $category->name,
                             'id' => $category->id,
                             'error' => $e->getMessage(),
@@ -895,7 +895,7 @@ Examples:
             }
             
             if ($trace && (($deleted + $skipped) % 100 == 0)) {
-                $trace->output(get_string('categoriesprogress', 'local_deleteoldquizattempts', [
+                $trace->output(get_string('categoriesprogress', 'local_cleanupquestions', [
                     'deleted' => $deleted,
                     'skipped' => $skipped,
                 ]));
@@ -903,7 +903,7 @@ Examples:
         }
         
         if ($trace) {
-            $trace->output(get_string('emptycategoriesdeleted', 'local_deleteoldquizattempts', [
+            $trace->output(get_string('emptycategoriesdeleted', 'local_cleanupquestions', [
                 'deleted' => $deleted,
                 'skipped' => $skipped,
             ]));
@@ -935,7 +935,7 @@ Examples:
         }
 
         if ($trace) {
-            $trace->output(get_string('scanningbrokenquestions', 'local_deleteoldquizattempts'));
+            $trace->output(get_string('scanningbrokenquestions', 'local_cleanupquestions'));
         }
 
         $fixed = 0;
@@ -986,7 +986,7 @@ Examples:
                 if ($action === 'report') {
                     $failed++;
                     if ($trace) {
-                        $trace->output(get_string('brokenquestionfound', 'local_deleteoldquizattempts', [
+                        $trace->output(get_string('brokenquestionfound', 'local_cleanupquestions', [
                             'id' => $question->id,
                             'name' => $question->name,
                             'type' => $question->qtype,
@@ -996,7 +996,7 @@ Examples:
                 }
                 
                 if ($trace) {
-                    $trace->output(get_string('brokenquestionfound', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('brokenquestionfound', 'local_cleanupquestions', [
                         'id' => $question->id,
                         'name' => $question->name,
                         'type' => $question->qtype,
@@ -1010,7 +1010,7 @@ Examples:
                         if (!$DB->record_exists('question', ['id' => $question->id])) {
                             $fixed++;
                             if ($trace) {
-                                $trace->output(get_string('brokenquestiondeleted', 'local_deleteoldquizattempts', [
+                                $trace->output(get_string('brokenquestiondeleted', 'local_cleanupquestions', [
                                     'id' => $question->id,
                                     'name' => $question->name,
                                 ]));
@@ -1018,7 +1018,7 @@ Examples:
                         } else {
                             $failed++;
                             if ($trace) {
-                                $trace->output(get_string('brokenquestiondeletefailed', 'local_deleteoldquizattempts', [
+                                $trace->output(get_string('brokenquestiondeletefailed', 'local_cleanupquestions', [
                                     'id' => $question->id,
                                     'name' => $question->name,
                                 ]));
@@ -1027,7 +1027,7 @@ Examples:
                     } catch (\Exception $e) {
                         $failed++;
                         if ($trace) {
-                            $trace->output(get_string('brokenquestiondeletefailed', 'local_deleteoldquizattempts', [
+                            $trace->output(get_string('brokenquestiondeletefailed', 'local_cleanupquestions', [
                                 'id' => $question->id,
                                 'name' => $question->name,
                             ]) . ' - ' . $e->getMessage());
@@ -1040,7 +1040,7 @@ Examples:
                         if ($result) {
                             $fixed++;
                             if ($trace) {
-                                $trace->output(get_string('brokenquestionfixed', 'local_deleteoldquizattempts', [
+                                $trace->output(get_string('brokenquestionfixed', 'local_cleanupquestions', [
                                     'id' => $question->id,
                                     'name' => $question->name,
                                 ]));
@@ -1048,7 +1048,7 @@ Examples:
                         } else {
                             $failed++;
                             if ($trace) {
-                                $trace->output(get_string('brokenquestionfixfailed', 'local_deleteoldquizattempts', [
+                                $trace->output(get_string('brokenquestionfixfailed', 'local_cleanupquestions', [
                                     'id' => $question->id,
                                     'name' => $question->name,
                                 ]));
@@ -1057,7 +1057,7 @@ Examples:
                     } catch (\Exception $e) {
                         $failed++;
                         if ($trace) {
-                            $trace->output(get_string('brokenquestionfixfailed', 'local_deleteoldquizattempts', [
+                            $trace->output(get_string('brokenquestionfixfailed', 'local_cleanupquestions', [
                                 'id' => $question->id,
                                 'name' => $question->name,
                             ]) . ' - ' . $e->getMessage());
@@ -1095,7 +1095,7 @@ Examples:
             if ($action === 'report') {
                 $failed++;
                 if ($trace) {
-                    $trace->output(get_string('brokenquestionnoanswersfound', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('brokenquestionnoanswersfound', 'local_cleanupquestions', [
                         'id' => $question->id,
                         'name' => $question->name,
                         'type' => $question->qtype,
@@ -1105,7 +1105,7 @@ Examples:
             }
             
             if ($trace) {
-                $trace->output(get_string('brokenquestionnoanswersfound', 'local_deleteoldquizattempts', [
+                $trace->output(get_string('brokenquestionnoanswersfound', 'local_cleanupquestions', [
                     'id' => $question->id,
                     'name' => $question->name,
                     'type' => $question->qtype,
@@ -1118,7 +1118,7 @@ Examples:
                     if (!$DB->record_exists('question', ['id' => $question->id])) {
                         $fixed++;
                         if ($trace) {
-                            $trace->output(get_string('brokenquestiondeleted', 'local_deleteoldquizattempts', [
+                            $trace->output(get_string('brokenquestiondeleted', 'local_cleanupquestions', [
                                 'id' => $question->id,
                                 'name' => $question->name,
                             ]));
@@ -1129,7 +1129,7 @@ Examples:
                 } catch (\Exception $e) {
                     $failed++;
                     if ($trace) {
-                        $trace->output(get_string('brokenquestiondeletefailed', 'local_deleteoldquizattempts', [
+                        $trace->output(get_string('brokenquestiondeletefailed', 'local_cleanupquestions', [
                             'id' => $question->id,
                             'name' => $question->name,
                         ]) . ' - ' . $e->getMessage());
@@ -1139,7 +1139,7 @@ Examples:
                 // Cannot easily fix questions without answers, recommend deletion
                 $failed++;
                 if ($trace) {
-                    $trace->output(get_string('brokenquestioncannotfix', 'local_deleteoldquizattempts', [
+                    $trace->output(get_string('brokenquestioncannotfix', 'local_cleanupquestions', [
                         'id' => $question->id,
                         'name' => $question->name,
                     ]));

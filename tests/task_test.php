@@ -17,22 +17,22 @@
 /**
  * Tool for deleting old quiz and question attempts.
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_deleteoldquizattempts;
+namespace local_cleanupquestions;
 
 use advanced_testcase;
 
 /**
  * Unittests for task
  *
- * @package    local_deleteoldquizattempts
- * @copyright  2019 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    local_cleanupquestions
+ * @copyright  CentricApp LTD (Dev Team) <dev@centricapp.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \local_deleteoldquizattempts\helper::task_handler
+ * @covers \local_cleanupquestions\helper::task_handler
  */
 final class task_test extends advanced_testcase {
 
@@ -42,9 +42,9 @@ final class task_test extends advanced_testcase {
     public function test_all_disabled(): void {
         $this->resetAfterTest(true);
 
-        set_config('attemptlifetime', null, 'local_deleteoldquizattempts');
-        set_config('maxexecutiontime', null, 'local_deleteoldquizattempts');
-        set_config('deleteunusedquestions', null, 'local_deleteoldquizattempts');
+        set_config('attemptlifetime', null, 'local_cleanupquestions');
+        set_config('maxexecutiontime', null, 'local_cleanupquestions');
+        set_config('deleteunusedquestions', null, 'local_cleanupquestions');
 
         $mockbuilder = $this->getMockBuilder(helper::class);
         $mockbuilder->onlyMethods(['delete_attempts', 'delete_unused_questions']);
@@ -65,9 +65,9 @@ final class task_test extends advanced_testcase {
     public function test_delete_attempts_enabled(): void {
         $this->resetAfterTest(true);
 
-        set_config('attemptlifetime', 30, 'local_deleteoldquizattempts');
-        set_config('maxexecutiontime', 0, 'local_deleteoldquizattempts');
-        set_config('deleteunusedquestions', 0, 'local_deleteoldquizattempts');
+        set_config('attemptlifetime', 30, 'local_cleanupquestions');
+        set_config('maxexecutiontime', 0, 'local_cleanupquestions');
+        set_config('deleteunusedquestions', 0, 'local_cleanupquestions');
 
         $mockbuilder = $this->getMockBuilder(helper::class);
         $mockbuilder->onlyMethods(['delete_attempts', 'delete_unused_questions']);
@@ -101,9 +101,9 @@ final class task_test extends advanced_testcase {
     public function test_delete_questions_enabled(): void {
         $this->resetAfterTest(true);
 
-        set_config('attemptlifetime', 0, 'local_deleteoldquizattempts');
-        set_config('maxexecutiontime', 0, 'local_deleteoldquizattempts');
-        set_config('deleteunusedquestions', 1, 'local_deleteoldquizattempts');
+        set_config('attemptlifetime', 0, 'local_cleanupquestions');
+        set_config('maxexecutiontime', 0, 'local_cleanupquestions');
+        set_config('deleteunusedquestions', 1, 'local_cleanupquestions');
 
         $mockbuilder = $this->getMockBuilder(helper::class);
         $mockbuilder->onlyMethods(['delete_attempts', 'delete_unused_questions']);
@@ -129,9 +129,9 @@ final class task_test extends advanced_testcase {
     public function test_timeout_on_first(): void {
         $this->resetAfterTest(true);
 
-        set_config('attemptlifetime', 30, 'local_deleteoldquizattempts');
-        set_config('maxexecutiontime', 1, 'local_deleteoldquizattempts');
-        set_config('deleteunusedquestions', 1, 'local_deleteoldquizattempts');
+        set_config('attemptlifetime', 30, 'local_cleanupquestions');
+        set_config('maxexecutiontime', 1, 'local_cleanupquestions');
+        set_config('deleteunusedquestions', 1, 'local_cleanupquestions');
 
         $mockbuilder = $this->getMockBuilder(helper::class);
         $mockbuilder->onlyMethods(['delete_attempts', 'delete_unused_questions']);
