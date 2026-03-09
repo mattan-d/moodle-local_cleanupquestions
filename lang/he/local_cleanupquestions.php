@@ -76,6 +76,7 @@ $string['nightlycleanupreportcourses'] = 'קורסים שעובדו: {$a}';
 $string['nightlycleanupreportcoursesskipped'] = 'קורסים שדולגו (לא קיימים): {$a}';
 $string['nightlycleanupreporttimelimitreached'] = 'הריצה נעצרה: הגעת למגבלת זמן.';
 $string['nightlycleanupreportduration'] = 'משך: {$a} שניות';
+$string['nightlycleanupreportresumepoint'] = 'בריצה הבאה ימשיך אחרי קורס מזהה {$a}';
 $string['nightlycleanupreportduplicatequestions'] = 'שאלות כפולות: {$a->deleted} נמחקו, {$a->skipped} דולגו';
 $string['nightlycleanupreportemptyduplicatecategories'] = 'קטגוריות כפולות ריקות: {$a->deleted} נמחקו, {$a->skipped} דולגו';
 $string['nightlycleanupreportemptycategories'] = 'קטגוריות ריקות: {$a->deleted} נמחקו, {$a->skipped} דולגו';

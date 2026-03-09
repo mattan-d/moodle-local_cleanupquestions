@@ -125,6 +125,7 @@ $string['nightlycleanupreportcourses'] = 'Courses processed: {$a}';
 $string['nightlycleanupreportcoursesskipped'] = 'Courses skipped (non-existent): {$a}';
 $string['nightlycleanupreporttimelimitreached'] = 'Run stopped: time limit reached.';
 $string['nightlycleanupreportduration'] = 'Duration: {$a} seconds';
+$string['nightlycleanupreportresumepoint'] = 'Next run will continue after course ID {$a}';
 $string['nightlycleanupreportduplicatequestions'] = 'Duplicate questions: {$a->deleted} deleted, {$a->skipped} skipped';
 $string['nightlycleanupreportemptyduplicatecategories'] = 'Empty duplicate categories: {$a->deleted} deleted, {$a->skipped} skipped';
 $string['nightlycleanupreportemptycategories'] = 'Empty categories: {$a->deleted} deleted, {$a->skipped} skipped';

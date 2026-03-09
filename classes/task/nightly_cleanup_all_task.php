@@ -60,15 +60,39 @@ class nightly_cleanup_all_task extends scheduled_task {
         }
         $stoptime = time() + $timelimit;
 
-        $courseids = [];
+        // All course IDs (except site), sorted - we rotate through these across runs.
+        $allcourseids = [];
         $courses = $DB->get_records('course', null, 'id ASC', 'id, fullname');
         foreach ($courses as $course) {
             if ($course->id == SITEID) {
                 continue;
             }
-            $courseids[] = $course->id;
+            $allcourseids[] = $course->id;
         }
 
+        $totalcourses = count($allcourseids);
+        if ($totalcourses === 0) {
+            return;
+        }
+
+        // Resume from the course after the last one we processed (persisted across runs).
+        $lastcourseid = (int) get_config('local_cleanupquestions', 'nightlycleanup_lastcourseid');
+        $startindex = 0;
+        if ($lastcourseid > 0) {
+            $pos = array_search($lastcourseid, $allcourseids, true);
+            if ($pos !== false) {
+                $startindex = $pos + 1;
+                if ($startindex >= $totalcourses) {
+                    $startindex = 0; // New cycle: start from beginning.
+                }
+            }
+        }
+
+        // Build this run's list: from startindex, wrap around, optionally cap by maxcourses.
+        $courseids = [];
+        for ($i = 0; $i < $totalcourses; $i++) {
+            $courseids[] = $allcourseids[($startindex + $i) % $totalcourses];
+        }
         if ($maxcourses > 0) {
             $courseids = array_slice($courseids, 0, $maxcourses);
         }
@@ -91,10 +115,11 @@ class nightly_cleanup_all_task extends scheduled_task {
         $helper = new helper();
         $trace = new \text_progress_trace();
 
-        $trace->output('Nightly cleanup started. Time limit: ' . $timelimit . 's, Max courses: ' . ($maxcourses > 0 ? $maxcourses : 'unlimited'));
-        $trace->output('Processing ' . count($courseids) . ' course(s)');
+        $trace->output('Nightly cleanup started. Time limit: ' . $timelimit . 's, Max courses per run: ' . ($maxcourses > 0 ? $maxcourses : 'unlimited'));
+        $trace->output('Total courses in site: ' . $totalcourses . ', resuming from course index ' . $startindex . ', processing ' . count($courseids) . ' course(s) this run');
         $trace->output('');
 
+        $lastProcessedCourseId = null;
         foreach ($courseids as $courseid) {
             if (!$DB->record_exists('course', ['id' => $courseid])) {
                 $summary['courses_skipped']++;
@@ -123,8 +148,7 @@ class nightly_cleanup_all_task extends scheduled_task {
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
-                $summary['courses_processed']++;
-                break;
+                break; // Incomplete course: do not count, next run will retry it.
             }
 
             $trace->output('Step 2/4: Deleting empty duplicate categories...');
@@ -135,7 +159,6 @@ class nightly_cleanup_all_task extends scheduled_task {
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
-                $summary['courses_processed']++;
                 break;
             }
 
@@ -147,7 +170,6 @@ class nightly_cleanup_all_task extends scheduled_task {
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
-                $summary['courses_processed']++;
                 break;
             }
 
@@ -158,6 +180,7 @@ class nightly_cleanup_all_task extends scheduled_task {
             $summary['unused_questions_skipped'] += $skipped;
 
             $summary['courses_processed']++;
+            $lastProcessedCourseId = $courseid;
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
@@ -167,12 +190,18 @@ class nightly_cleanup_all_task extends scheduled_task {
             }
         }
 
+        if ($lastProcessedCourseId !== null) {
+            set_config('nightlycleanup_lastcourseid', $lastProcessedCourseId, 'local_cleanupquestions');
+            $trace->output('Saved resume point: next run will continue after course ID ' . $lastProcessedCourseId);
+        }
+
         $trace->output('');
         $trace->output('Nightly cleanup finished. Sending report to admins.');
         $trace->finished();
 
         $summary['finished_at'] = time();
         $summary['duration_seconds'] = $summary['finished_at'] - $summary['started_at'];
+        $summary['last_processed_course_id'] = $lastProcessedCourseId;
 
         $this->send_report_to_admins($summary);
     }
@@ -244,6 +273,9 @@ class nightly_cleanup_all_task extends scheduled_task {
             $lines[] = get_string('nightlycleanupreporttimelimitreached', 'local_cleanupquestions');
         }
         $lines[] = get_string('nightlycleanupreportduration', 'local_cleanupquestions', $summary['duration_seconds']);
+        if (!empty($summary['last_processed_course_id'])) {
+            $lines[] = get_string('nightlycleanupreportresumepoint', 'local_cleanupquestions', $summary['last_processed_course_id']);
+        }
         $lines[] = '';
 
         $lines[] = get_string('nightlycleanupreportduplicatequestions', 'local_cleanupquestions', [
