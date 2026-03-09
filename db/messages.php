@@ -32,4 +32,11 @@ $messageproviders = [
             'email' => MESSAGE_PERMITTED,
         ],
     ],
+    'nightlycleanupreport' => [
+        'capability' => 'moodle/site:config',
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 ];

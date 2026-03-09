@@ -90,4 +90,35 @@ if ($hassiteconfig) {
             ]
         )
     );
+
+    $settings->add(
+        new admin_setting_configselect(
+            'local_cleanupquestions/nightlycleanuptimelimit',
+            new lang_string('nightlycleanuptimelimit', 'local_cleanupquestions'),
+            new lang_string('nightlycleanuptimelimit_help', 'local_cleanupquestions'),
+            60 * 60,
+            [
+                0 => new lang_string('notlimited', 'local_cleanupquestions'),
+                60 * 30 => new lang_string('numminutes', '', 30),
+                60 * 60 => new lang_string('numhours', '', 1),
+                60 * 60 * 2 => new lang_string('numhours', '', 2),
+                60 * 60 * 3 => new lang_string('numhours', '', 3),
+                60 * 60 * 4 => new lang_string('numhours', '', 4),
+                60 * 60 * 6 => new lang_string('numhours', '', 6),
+                60 * 60 * 8 => new lang_string('numhours', '', 8),
+                60 * 60 * 12 => new lang_string('numhours', '', 12),
+            ]
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'local_cleanupquestions/nightlycleanupmaxcourses',
+            new lang_string('nightlycleanupmaxcourses', 'local_cleanupquestions'),
+            new lang_string('nightlycleanupmaxcourses_help', 'local_cleanupquestions'),
+            0,
+            PARAM_INT,
+            6
+        )
+    );
 }

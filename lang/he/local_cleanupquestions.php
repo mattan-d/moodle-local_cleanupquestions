@@ -65,3 +65,22 @@ $string['duplicatequestionusageinfo'] = ' - נמצאת בשימוש ב-{$a->comp
 $string['duplicatequestionskippeddeletionfailed'] = 'דולגה שאלה כפולה (מחיקה נכשלה - {$a->reason}): {$a->name} (מזהה: {$a->id})';
 $string['duplicatequestionskippederror'] = 'דולגה שאלה כפולה (שגיאה: {$a->error}): {$a->name} (מזהה: {$a->id})';
 $string['duplicatequestionsprogress'] = 'נמחקו {$a->deleted}, דולגו {$a->skipped} מתוך {$a->total}';
+
+$string['nightlycleanuptaskname'] = 'ניקוי לילי של כל הקורסים (בנק שאלות)';
+$string['nightlycleanuptimelimit'] = 'ניקוי לילי: זמן ריצה מקסימלי';
+$string['nightlycleanuptimelimit_help'] = 'זמן ריצה מקסימלי (בשניות/דקות/שעות) לכל ריצה לילית. כשמגיעים למגבלה המשימה נעצרת ונשלח דוח. הגדר "ללא הגבלה" לעיבוד כל הקורסים בריצה אחת (לא מומלץ באתרים גדולים).';
+$string['nightlycleanupmaxcourses'] = 'ניקוי לילי: מקסימום קורסים לריצה';
+$string['nightlycleanupmaxcourses_help'] = 'מספר מקסימלי של קורסים לעיבוד בריצה לילית אחת. 0 = ללא הגבלה (רק מגבלת הזמן חלה). שימושי לפיזור הניקוי על פני כמה לילות באתרים גדולים.';
+$string['nightlycleanupreporttitle'] = 'ניקוי שאלות לילי – דוח סטטיסטיקה';
+$string['nightlycleanupreportcourses'] = 'קורסים שעובדו: {$a}';
+$string['nightlycleanupreportcoursesskipped'] = 'קורסים שדולגו (לא קיימים): {$a}';
+$string['nightlycleanupreporttimelimitreached'] = 'הריצה נעצרה: הגעת למגבלת זמן.';
+$string['nightlycleanupreportduration'] = 'משך: {$a} שניות';
+$string['nightlycleanupreportduplicatequestions'] = 'שאלות כפולות: {$a->deleted} נמחקו, {$a->skipped} דולגו';
+$string['nightlycleanupreportemptyduplicatecategories'] = 'קטגוריות כפולות ריקות: {$a->deleted} נמחקו, {$a->skipped} דולגו';
+$string['nightlycleanupreportemptycategories'] = 'קטגוריות ריקות: {$a->deleted} נמחקו, {$a->skipped} דולגו';
+$string['nightlycleanupreportunusedquestions'] = 'שאלות לא בשימוש: {$a->deleted} נמחקו, {$a->skipped} דולגו';
+$string['nightlycleanupreporttotal'] = 'סה"כ: {$a->deleted} פריטים נמחקו, {$a->skipped} פריטים דולגו';
+$string['nightlycleanupreportsubject'] = 'ניקוי שאלות לילי – דוח סטטיסטיקה';
+$string['nightlycleanupreportsmall'] = 'ניקוי השאלות הלילי הסתיים. ראה דוח מלא בהודעה.';
+$string['messageprovider:nightlycleanupreport'] = 'דוח סטטיסטיקת ניקוי שאלות לילי';

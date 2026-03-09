@@ -16,7 +16,7 @@ A Moodle local plugin for cleaning up question banks and quiz data: removing dup
 
 ## Features
 
-- **Scheduled task:** Delete old quiz attempts based on configurable lifetime.
+- **Scheduled tasks:** Delete old quiz attempts (configurable lifetime); **nightly cleanup** of all courses with time/course limits and a statistics report sent to admins.
 - **Question cleanup:** Remove duplicate questions (keeps oldest), empty duplicate categories, empty categories, and unused (hidden) questions.
 - **Broken questions:** Fix or remove questions with missing options via CLI.
 - **Web interface:** Run cleanup per course or for all courses from the course/site admin area.
@@ -28,7 +28,11 @@ A Moodle local plugin for cleaning up question banks and quiz data: removing dup
 
 - **Delete attempts older than** – Age (days/years) after which quiz attempts are deleted by the scheduled task. Set to "Do not delete old attempts" to disable scheduled deletion (CLI still available).
 - **Delete unused hidden questions** – Whether the scheduled task should also delete unused hidden questions after removing old attempts.
-- **Max execution time** – Time limit for the scheduled task to avoid overload.
+- **Max execution time** – Time limit for the scheduled task (old attempts) to avoid overload.
+- **Nightly cleanup: max execution time** – Time limit for the nightly “clean all courses” task (default: 1 hour). When reached, the task stops and sends a report.
+- **Nightly cleanup: max courses per run** – Maximum number of courses to process per night (0 = no limit). Use to spread work over several nights on large sites.
+
+The **nightly cleanup** task runs once per night (default 2:00 AM). It processes courses in order, runs the same four cleanup steps as the CLI “cleanup all”, respects the time and course limits above, then sends a **statistics report** to all users with `moodle/site:config` (popup + email). The report includes courses processed, items deleted/skipped per operation, total deleted/skipped, duration, and whether the time limit was reached.
 
 ## Web Interface
 

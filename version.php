@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_cleanupquestions';
-$plugin->version   = 2026011500;
-$plugin->release = '3.0.1';
+$plugin->version   = 2026030400;
+$plugin->release = '3.1.0';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->requires  = 2022041900; // Moodle 4.0.
 $plugin->dependencies = [
