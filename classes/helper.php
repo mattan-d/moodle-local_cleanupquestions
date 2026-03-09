@@ -162,8 +162,8 @@ class helper {
                         )
                 )
             ";
-        $sql = 'SELECT q.id ' . $sqlfromwhere;
-        $sqlcount = 'SELECT count(q.id) ' . $sqlfromwhere;
+        $sql = 'SELECT DISTINCT q.id ' . $sqlfromwhere;
+        $sqlcount = 'SELECT COUNT(DISTINCT q.id) ' . $sqlfromwhere;
         $params = [
             'hidden' => question_version_status::QUESTION_STATUS_HIDDEN,
             'preview' => 'core_question_preview',
@@ -194,6 +194,9 @@ class helper {
             $rs = $DB->get_recordset_sql($sql, $params, 0, 10000);
             $rsempty = true;
             foreach ($rs as $question) {
+                if (($deleted + $skipped) >= $total) {
+                    break 2;
+                }
                 $rsempty = false;
                 question_delete_question($question->id);
                 if ($DB->record_exists('question', ['id' => $question->id])) {
