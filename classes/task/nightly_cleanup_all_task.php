@@ -61,13 +61,14 @@ class nightly_cleanup_all_task extends scheduled_task {
         $stoptime = time() + $timelimit;
 
         // All course IDs (except site), sorted - we rotate through these across runs.
+        // Use int so comparison with saved lastcourseid (int) works.
         $allcourseids = [];
         $courses = $DB->get_records('course', null, 'id ASC', 'id, fullname');
         foreach ($courses as $course) {
             if ($course->id == SITEID) {
                 continue;
             }
-            $allcourseids[] = $course->id;
+            $allcourseids[] = (int) $course->id;
         }
 
         $totalcourses = count($allcourseids);
