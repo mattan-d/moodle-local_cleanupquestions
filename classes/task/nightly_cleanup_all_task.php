@@ -89,11 +89,16 @@ class nightly_cleanup_all_task extends scheduled_task {
         ];
 
         $helper = new helper();
-        $trace = null;
+        $trace = new \text_progress_trace();
+
+        $trace->output('Nightly cleanup started. Time limit: ' . $timelimit . 's, Max courses: ' . ($maxcourses > 0 ? $maxcourses : 'unlimited'));
+        $trace->output('Processing ' . count($courseids) . ' course(s)');
+        $trace->output('');
 
         foreach ($courseids as $courseid) {
             if (!$DB->record_exists('course', ['id' => $courseid])) {
                 $summary['courses_skipped']++;
+                $trace->output("Skipping non-existent course ID: $courseid");
                 continue;
             }
 
@@ -102,9 +107,17 @@ class nightly_cleanup_all_task extends scheduled_task {
                 break;
             }
 
+            $course = $DB->get_record('course', ['id' => $courseid], 'id, fullname');
+            $trace->output('');
+            $trace->output('=======================================================');
+            $trace->output("Course: {$course->fullname} (ID: {$courseid})");
+            $trace->output('=======================================================');
+
             $helper->courseid = $courseid;
 
+            $trace->output('Step 1/4: Deleting duplicate questions...');
             [$deleted, $skipped] = $helper->delete_duplicate_questions($stoptime, $trace);
+            $trace->output("  Result: Deleted $deleted, Skipped $skipped");
             $summary['duplicate_questions_deleted'] += $deleted;
             $summary['duplicate_questions_skipped'] += $skipped;
 
@@ -114,9 +127,11 @@ class nightly_cleanup_all_task extends scheduled_task {
                 break;
             }
 
+            $trace->output('Step 2/4: Deleting empty duplicate categories...');
             [$deleted, $skipped] = $helper->delete_empty_duplicate_categories($stoptime, $trace);
             $summary['empty_duplicate_categories_deleted'] += $deleted;
             $summary['empty_duplicate_categories_skipped'] += $skipped;
+            $trace->output("  Result: Deleted $deleted, Skipped $skipped");
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
@@ -124,9 +139,11 @@ class nightly_cleanup_all_task extends scheduled_task {
                 break;
             }
 
+            $trace->output('Step 3/4: Deleting empty categories...');
             [$deleted, $skipped] = $helper->delete_empty_categories($trace);
             $summary['empty_categories_deleted'] += $deleted;
             $summary['empty_categories_skipped'] += $skipped;
+            $trace->output("  Result: Deleted $deleted, Skipped $skipped");
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
@@ -134,7 +151,9 @@ class nightly_cleanup_all_task extends scheduled_task {
                 break;
             }
 
+            $trace->output('Step 4/4: Deleting unused questions...');
             [$deleted, $skipped] = $helper->delete_unused_questions($stoptime, $trace);
+            $trace->output("  Result: Deleted $deleted, Skipped $skipped");
             $summary['unused_questions_deleted'] += $deleted;
             $summary['unused_questions_skipped'] += $skipped;
 
@@ -142,9 +161,15 @@ class nightly_cleanup_all_task extends scheduled_task {
 
             if ($stoptime && time() >= $stoptime) {
                 $summary['time_limit_reached'] = true;
+                $trace->output('');
+                $trace->output('Time limit reached. Stopping.');
                 break;
             }
         }
+
+        $trace->output('');
+        $trace->output('Nightly cleanup finished. Sending report to admins.');
+        $trace->finished();
 
         $summary['finished_at'] = time();
         $summary['duration_seconds'] = $summary['finished_at'] - $summary['started_at'];
