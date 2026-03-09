@@ -497,9 +497,15 @@ Examples:
         
         // Process each group of duplicates
         foreach ($duplicategroups as $group) {
-            // Get all questions with this name, ordered by creation time (oldest first)
+            // Safety: stop if we have already processed all expected duplicates
+            if (($deleted + $skipped) >= $totalduplicates) {
+                break;
+            }
+
+            // Get all questions with this name, ordered by creation time (oldest first).
+            // Use DISTINCT to avoid processing the same question multiple times (e.g. multiple versions).
             $sql = "
-                SELECT 
+                SELECT DISTINCT
                     q.id,
                     q.name,
                     q.timecreated
@@ -528,6 +534,9 @@ Examples:
             // Skip the first one (oldest), delete the rest
             $first = true;
             foreach ($questions as $question) {
+                if (($deleted + $skipped) >= $totalduplicates) {
+                    break 2;
+                }
                 if ($first) {
                     $first = false;
                     continue; // Keep the oldest question
@@ -703,6 +712,9 @@ Examples:
         
         // Process each group of duplicates
         foreach ($duplicategroups as $group) {
+            if (($deleted + $skipped) >= $totalduplicates) {
+                break;
+            }
             $contextid = $this->courseid ? $params['contextid'] : $group->contextid;
             
             // Get all categories with this name, ordered by creation time (oldest first)
@@ -727,6 +739,9 @@ Examples:
             // Skip the first one (oldest), delete the rest if empty
             $first = true;
             foreach ($categories as $category) {
+                if (($deleted + $skipped) >= $totalduplicates) {
+                    break 2;
+                }
                 if ($first) {
                     $first = false;
                     continue; // Keep the oldest category
